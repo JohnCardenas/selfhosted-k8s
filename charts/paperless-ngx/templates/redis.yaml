@@ -1,0 +1,60 @@
+---
+{{- $fullname := include "paperless-ngx.fullname" . }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-redis
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "paperless-ngx.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        checksum/deployment: {{ toYaml .Values.redis.deployment | sha256sum }}
+      labels:
+        {{- include "paperless-ngx.labels" . | nindent 8 }}
+        app.kubernetes.io/component: redis
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-redis
+          {{- with .Values.redis.deployment.image }}
+          image: {{ .repository }}:{{ .tag }}
+          {{- end }}
+          volumeMounts:
+            {{- range $v := .Values.redis.deployment.volumes }}
+            - name: {{ $v.name }}
+              mountPath: {{ $v.mountPath }}
+            {{- end }}
+      restartPolicy: Always
+      volumes:
+        {{- range $v := .Values.redis.deployment.volumes }}
+        - name: {{ $v.name }}
+          persistentVolumeClaim:
+            claimName: {{ $fullname }}-{{ $v.name }}
+        {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}-redis-service
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+spec:
+  ports:
+    {{- range $port := .Values.redis.service.ports }}
+    - name: "{{ $port }}"
+      port: {{ $port }}
+      targetPort: {{ $port }}
+    {{- end }}
+  selector:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis

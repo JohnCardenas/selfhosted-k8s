@@ -1,0 +1,30 @@
+{{- $fullname := include "paperless-ngx.fullname" . }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $fullname }}-service-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "paperless-ngx.labels" . | nindent 6 }}
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            {{- include "paperless-ngx.labels" . | nindent 12 }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $fullname }}-ingress-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "paperless-ngx.labels" . | nindent 6 }}
+      app.kubernetes.io/component: paperless
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Values.networkPolicy.allowIngressFromNamespace }}

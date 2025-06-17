@@ -1,0 +1,34 @@
+{{- $fullname := include "paperless-ngx.fullname" . }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullname }}
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.ingress }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .maxUploadSize }}
+    {{- if .certManagerClusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ .certManagerClusterIssuer }}
+    {{- end }}
+    {{- end }}
+spec:
+  {{- with .Values.ingress }}
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - {{ .endpoint }}
+      secretName: {{ $fullname }}-paperless-ingress-cert
+  rules:
+    - host: {{ .endpoint }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-paperless-service
+                port:
+                  number: 8000
+  {{- end }}

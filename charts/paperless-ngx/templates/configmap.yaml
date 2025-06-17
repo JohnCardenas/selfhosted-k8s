@@ -1,0 +1,185 @@
+{{- $fullname := include "paperless-ngx.fullname" . }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullname }}-paperless-configmap
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: paperless
+data:
+  PAPERLESS_URL: "https://{{ .Values.ingress.endpoint }}"
+  # Authentication (built-in) settings
+  {{- with .Values.config.authentication.builtin }}
+  {{- if not (kindIs "invalid" .allowSignups) }}
+  PAPERLESS_ACCOUNT_ALLOW_SIGNUPS: "{{ .allowSignups }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .defaultGroups) }}
+  PAPERLESS_ACCOUNT_DEFAULT_GROUPS: "{{ .defaultGroups }}"
+  {{- end }}
+  {{- end }}
+  # Authentication (session) settings
+  {{- with .Values.config.authentication.session }}
+  {{- if not (kindIs "invalid" .cookieAge) }}
+  PAPERLESS_ACCOUNT_SESSION_COOKIE_AGE: "{{ .cookieAge }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .remember) }}
+  PAPERLESS_ACCOUNT_SESSION_REMEMBER: "{{ .remember }}"
+  {{- end }}
+  {{- end }}
+  # Authentication (SSO) settings
+  {{- with .Values.config.authentication.sso }}
+  {{- if not (kindIs "invalid" .disableRegularLogin) }}
+  PAPERLESS_DISABLE_REGULAR_LOGIN: "{{ .disableRegularLogin }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .redirectLogin) }}
+  PAPERLESS_REDIRECT_LOGIN_TO_SSO: "{{ .redirectLogin }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .accountSyncGroups) }}
+  PAPERLESS_SOCIAL_ACCOUNT_SYNC_GROUPS: "{{ .accountSyncGroups }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .allowSignups) }}
+  PAPERLESS_SOCIAL_ALLOW_SIGNUPS: "{{ .allowSignups }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .autoSignup) }}
+  PAPERLESS_SOCIAL_AUTO_SIGNUP: "{{ .autoSignup }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .defaultGroups) }}
+  PAPERLESS_SOCIAL_ACCOUNT_DEFAULT_GROUPS: "{{ .defaultGroups }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .providers) }}
+  PAPERLESS_SOCIALACCOUNT_PROVIDERS: "{{ .providers }}"
+  {{- end }}
+  {{- end }}
+  # Authentication (email) settings
+  {{- with .Values.config.authentication.email }}
+  {{- if not (kindIs "invalid" .signupVerification) }}
+  PAPERLESS_ACCOUNT_EMAIL_VERIFICATION: "{{ .signupVerification }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .unknownAccounts) }}
+  PAPERLESS_ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS: "{{ .unknownAccounts }}"
+  {{- end }}
+  {{- end }}
+  # Document Consumption settings
+  {{- with .Values.config.documentConsumption }}
+  {{- if not (kindIs "invalid" .barcodeScanner) }}
+  PAPERLESS_CONSUMER_BARCODE_SCANNER: "{{ .barcodeScanner }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .deleteDuplicates) }}
+  PAPERLESS_CONSUMER_DELETE_DUPLICATES: "{{ .deleteDuplicates }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .consumerDisable) }}
+  PAPERLESS_CONSUMER_DISABLE: "{{ .consumerDisable }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .ignorePatterns) }}
+  PAPERLESS_CONSUMER_IGNORE_PATTERNS: "{{ .ignorePatterns }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .recursive) }}
+  PAPERLESS_CONSUMER_RECURSIVE: "{{ .recursive }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .subdirsAsTags) }}
+  PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "{{ .subdirsAsTags }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .postConsumeScript) }}
+  PAPERLESS_POST_CONSUME_SCRIPT: "{{ .postConsumeScript }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .preConsumeScript) }}
+  PAPERLESS_PRE_CONSUME_SCRIPT: "{{ .preConsumeScript }}"
+  {{- end }}
+  {{- end }}
+  # Filename settings
+  {{- with .Values.config.filenames }}
+  {{- if not (kindIs "invalid" .format) }}
+  PAPERLESS_FILENAME_FORMAT: "{{ .format }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .formatRemoveNone) }}
+  PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: "{{ .formatRemoveNone }}"
+  {{- end }}
+  {{- end }}
+  # Hosting settings
+  {{- with .Values.config.hosting }}
+  {{- if not (kindIs "invalid" .useXForwardHost) }}
+  PAPERLESS_USE_X_FORWARD_HOST: "{{ .useXForwardHost }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .useXForwardPort) }}
+  PAPERLESS_USE_X_FORWARD_PORT: "{{ .useXForwardPort }}"
+  {{- end }}
+  {{- end }}
+  # OCR settings
+  {{- with .Values.config.ocr }}
+  {{- if not (kindIs "invalid" .clean) }}
+  PAPERLESS_OCR_CLEAN: "{{ .clean }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .colorConversionStrategy) }}
+  PAPERLESS_OCR_COLOR_CONVERSION_STRATEGY: "{{ .colorConversionStrategy }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .deskew) }}
+  PAPERLESS_OCR_DESKEW: "{{ .deskew }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .imageDpi) }}
+  PAPERLESS_OCR_IMAGE_DPI: "{{ .imageDpi }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .language) }}
+  PAPERLESS_OCR_LANGUAGE: "{{ .language }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .maxImagePixels) }}
+  PAPERLESS_OCR_MAX_IMAGE_PIXELS: "{{ .maxImagePixels }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .mode) }}
+  PAPERLESS_OCR_MODE: "{{ .mode }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .outputType) }}
+  PAPERLESS_OCR_OUTPUT_TYPE: "{{ .outputType }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .pages) }}
+  PAPERLESS_OCR_PAGES: "{{ .pages }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .rotatePages) }}
+  PAPERLESS_OCR_ROTATE_PAGES: "{{ .rotatePages }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .rotatePagesThreshold) }}
+  PAPERLESS_OCR_ROTATE_PAGES_THRESHOLD: "{{ .rotatePagesThreshold }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .skipArchiveFile) }}
+  PAPERLESS_OCR_SKIP_ARCHIVE_FILE: {{ .skipArchiveFile }}
+  {{- end }}
+  {{- end }}
+  # Tweaks settings
+  {{- with .Values.config.tweaks }}
+  {{- if not (kindIs "invalid" .apps) }}
+  PAPERLESS_APPS: "{{ .apps }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .convertMemoryLimit) }}
+  PAPERLESS_CONVERT_MEMORY_LIMIT: "{{ .convertMemoryLimit }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .maxImagePixels) }}
+  PAPERLESS_MAX_IMAGE_PIXELS: "{{ .maxImagePixels }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .taskWorkers) }}
+  PAPERLESS_TASK_WORKERS: "{{ .taskWorkers }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .threadsPerWorker) }}
+  PAPERLESS_THREADS_PER_WORKER: "{{ .threadsPerWorker }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .timeZone) }}
+  PAPERLESS_TIME_ZONE: "{{ .timeZone }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .workerTimeout) }}
+  PAPERLESS_WORKER_TIMEOUT: "{{ .workerTimeout }}"
+  {{- end }}
+  {{- end }}
+  # Tweaks (cron) settings
+  {{- with .Values.config.tweaks.cron }}
+  {{- if not (kindIs "invalid" .emailTask) }}
+  PAPERLESS_EMAIL_TASK_CRON: "{{ .emailTask }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .indexTask) }}
+  PAPERLESS_INDEX_TASK_CRON: "{{ .indexTask }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .trainTask) }}
+  PAPERLESS_TRAIN_TASK_CRON: "{{ .trainTask }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .sanityTask) }}
+  PAPERLESS_SANITY_TASK_CRON: "{{ .sanityTask }}"
+  {{- end }}
+  {{- end }}

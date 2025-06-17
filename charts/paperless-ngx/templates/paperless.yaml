@@ -1,0 +1,80 @@
+---
+{{- $fullname := include "paperless-ngx.fullname" . }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-paperless
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: paperless
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "paperless-ngx.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: paperless
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "paperless-ngx.labels" . | nindent 8 }}
+        app.kubernetes.io/component: paperless
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/deployment: {{ toYaml .Values.paperless.deployment | sha256sum }}
+    spec:
+      containers:
+        - env:
+            - name: PAPERLESS_REDIS
+              value: redis://{{ $fullname }}-redis-service:6379
+            - name: PAPERLESS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $fullname }}-paperless-secrets
+                  key: secretKey
+            {{- if .Values.config.optionalServices.tikaEnabled }}
+            - name: PAPERLESS_TIKA_ENABLED
+              value: "1"
+            - name: PAPERLESS_TIKA_ENDPOINT
+              value: http://{{ $fullname }}-tika-service:9998
+            - name: PAPERLESS_TIKA_GOTENBERG_ENDPOINT
+              value: http://{{ $fullname }}-gotenberg-service:3000
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ $fullname }}-paperless-configmap
+          {{- with .Values.paperless.deployment.image }}
+          image: {{ .repository }}:{{ .tag }}
+          {{- end }}
+          name: {{ .Chart.Name }}
+          volumeMounts:
+            {{- range $v := .Values.paperless.deployment.volumes }}
+            - name: {{ $v.name }}
+              mountPath: {{ $v.mountPath }}
+            {{- end }}
+      restartPolicy: Always
+      volumes:
+        {{- range $v := .Values.paperless.deployment.volumes }}
+        - name: {{ $v.name }}
+          persistentVolumeClaim:
+            claimName: {{ $fullname }}-{{ $v.name }}
+        {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}-paperless-service
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: paperless
+spec:
+  ports:
+    {{- range $port := .Values.paperless.service.ports }}
+    - name: "{{ $port }}"
+      port: {{ $port }}
+      targetPort: {{ $port }}
+    {{- end }}
+  selector:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: paperless

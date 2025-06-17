@@ -1,0 +1,55 @@
+---
+{{- $fullname := include "paperless-ngx.fullname" . }}
+{{- if .Values.config.optionalServices.tikaEnabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-gotenberg
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: gotenberg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "paperless-ngx.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: gotenberg
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        "checksum/config": {{ toYaml .Values.gotenberg.deployment | sha256sum }}
+      labels:
+        {{- include "paperless-ngx.labels" . | nindent 8 }}
+        app.kubernetes.io/component: gotenberg
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-gotenberg
+          {{- with .Values.gotenberg.deployment.image }}
+          image: {{ .repository }}:{{ .tag }}
+          {{- end }}
+          args:
+            - gotenberg
+            - --chromium-disable-javascript=true
+            - --chromium-allow-list=file:///tmp/.*
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}-gotenberg-service
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: gotenberg
+spec:
+  ports:
+    {{- range $port := .Values.gotenberg.service.ports }}
+    - name: "{{ $port }}"
+      port: {{ $port }}
+      targetPort: {{ $port }}
+    {{- end }}
+  selector:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: gotenberg
+{{- end }}

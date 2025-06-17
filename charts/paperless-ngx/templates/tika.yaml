@@ -1,0 +1,51 @@
+---
+{{- $fullname := include "paperless-ngx.fullname" . }}
+{{- if .Values.config.optionalServices.tikaEnabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}-tika
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: tika
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "paperless-ngx.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: tika
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        "checksum/config": {{ toYaml .Values.tika.deployment | sha256sum }}
+      labels:
+        {{- include "paperless-ngx.labels" . | nindent 8 }}
+        app.kubernetes.io/component: tika
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-tika
+          {{- with .Values.tika.deployment.image }}
+          image: {{ .repository }}:{{ .tag }}
+          {{- end }}
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}-tika-service
+  labels:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: tika
+spec:
+  ports:
+    {{- range $port := .Values.tika.service.ports }}
+    - name: "{{ $port }}"
+      port: {{ $port }}
+      targetPort: {{ $port }}
+    {{- end }}
+  selector:
+    {{- include "paperless-ngx.labels" . | nindent 4 }}
+    app.kubernetes.io/component: tika
+{{- end }}
