@@ -86,11 +86,101 @@ config:
       # Defaults to False
       redirectLogin:
 
+  barcodes:
+    #Defines the prefix that is used to identify a barcode as an ASN barcode.
+    # Defaults to "ASN"
+    asnBarcodePrefix:
+
+    # During barcode detection every page from a PDF document needs to be converted to an image.
+    # A dpi value can be specified in the conversion process. Default is 300. If the detection of small barcodes
+    # fails a bigger dpi value i.e. 600 can fix the issue. Try using in combination with
+    # PAPERLESS_CONSUMER_BARCODE_UPSCALE bigger than 1.0.
+    # Defaults to "300"
+    barcodeDpi:
+
+    # Defines the string to be detected as a separator barcode. If paperless is used with the PATCH-T
+    # separator pages, users shouldn't change this.
+    # Defaults to "PATCHT"
+    barcodeString:
+
+    # Defines the upscale factor used in barcode detection. Improves the detection of small barcodes,
+    # i.e. with a value of 1.5 by upscaling the document before the detection process. Upscaling will only
+    # take place if value is bigger than 1.0. Otherwise upscaling will not be performed to save resources.
+    # Try using in combination with PAPERLESS_CONSUMER_BARCODE_DPI set to a value higher than default.
+    # Defaults to 0.0
+    barcodeUpscale:
+
+    # Enables the scanning and page separation based on detected barcodes. This allows for scanning and adding
+    # multiple documents per uploaded file, which are separated by one or multiple barcode pages.
+    # For ease of use, it is suggested to use a standardized separation page, e.g. here.
+    # If no barcodes are detected in the uploaded file, no page separation will happen.
+    # The original document will be removed and the separated pages will be saved as pdf.
+    # See additional information in the advanced usage documentation
+    # Defaults to false.
+    enabled:
+
+    # Enables the detection of barcodes in the scanned document and setting the ASN (archive serial number)
+    # if a properly formatted barcode is detected.
+    # The barcode must consist of a (configurable) prefix and the ASN to be set, for instance ASN00123.
+    # The content after the prefix is cleaned of non-numeric characters.
+    # This option is compatible with barcode page separation, since pages will be split up before reading the ASN.
+    # If no ASN barcodes are detected in the uploaded file, no ASN will be set. If a barcode with an existing ASN
+    # is detected, the document will not be consumed and an error logged.
+    # Defaults to false.
+    enableAsnBarcode:
+
+    # Enables the detection of barcodes in the scanned document and assigns or creates tags if a properly formatted
+    # barcode is detected.
+    # The barcode must match one of the (configurable) regular expressions. If the barcode text contains ',' (comma),
+    # it is split into multiple barcodes which are individually processed for tagging.
+    # Matching is case insensitive.
+    # Defaults to false.
+    enableTagBarcode:
+
+    # Because barcode detection is a computationally-intensive operation, this setting limits the detection of
+    # barcodes to a number of first pages. If your scanner has a limit for the number of pages that can be scanned
+    # it would be sensible to set this as the limit here.
+    # Defaults to "0", allowing all pages to be checked for barcodes.
+    maxPages:
+
+    # If set to true, all pages that are split by a barcode (such as PATCHT) will be kept.
+    # Defaults to false.
+    retainSplitPages:
+
+    # Defines a dictionary of filter regex and substitute expressions.
+    # Syntax: {"<regex>": "<substitute>" [,...]]}
+    # A barcode is considered for tagging if the barcode text matches at least one of the provided pattern.
+    # If a match is found, the rule is applied. This allows very versatile reformatting and mapping of barcode
+    # pattern to tag values.
+    # If a tag is not found it will be created.
+    # Defaults to: {"TAG:(.*)": "\\g<1>"} which defines - a regex TAG:(.*) which includes barcodes beginning
+    # with TAG: followed by any text that gets stored into match group #1 and - a substitute \\g<1> that replaces
+    # the original barcode text by the content in match group #1.
+    # Consequently, the tag is the barcode text without its TAG: prefix.
+    # More examples:
+    # {"ASN12.*": "JOHN", "ASN13.*": "SMITH"} for example maps - ASN12nnnn barcodes to the tag JOHN and - ASN13nnnn
+    # barcodes to the tag SMITH.
+    # {"T-J": "JOHN", "T-S": "SMITH", "T-D": "DOE"} directly maps - T-J barcodes to the tag JOHN, - T-S barcodes
+    # to the tag SMITH and - T-D barcodes to the tag DOE.
+    # Please refer to the Python regex documentation for more information.
+    tagBarcodeMapping:
+
+    # Whether TIFF image files should be scanned for barcodes. This will automatically convert any TIFF image(s)
+    # to pdfs for later processing. This only has an effect, if PAPERLESS_CONSUMER_ENABLE_BARCODES has been enabled.
+    # Defaults to false.
+    tiffSupport:
+
   documentConsumption:
     # Sets the barcode scanner used for barcode functionality.
     # Currently, "PYZBAR" (the default) or "ZXING" might be selected. If you have problems that your
     # Barcodes/QR-Codes are not detected (especially with bad scan quality and/or small codes), try the other one.
     barcodeScanner:
+
+    # Paperless will try to determine the document creation date from its contents. Specify the date format Paperless
+    # should expect to see within your documents.
+    # This option defaults to DMY which translates to day first, month second, and year last order.
+    # Characters D, M, or Y can be shuffled to meet the required order.
+    dateOrder:
 
     # When the consumer detects a duplicate document, it will not touch the original document. This default behavior can be changed here.
     # Defaults to false.
@@ -100,6 +190,25 @@ config:
     # If you don't plan to consume documents via the consumption directory, you can disable the consumer
     # to save resources.
     disableConsumer:
+
+    # Enable or disable the GPG decryptor for encrypted emails. See GPG Decryptor for more information.
+    # Defaults to false.
+    enableGpgDecryptor:
+
+    # Paperless will check the document text for document date information. Use this setting to enable checking
+    # the document filename for date information. The date order can be set to any option as specified in
+    # https://dateparser.readthedocs.io/en/latest/settings.html#date-order. The filename will be checked first,
+    # and if nothing is found, the document text will be checked as normal.
+    # A date in a filename must have some separators (., ,, -, /, etc) for it to be parsed.
+    # Defaults to none, which disables this feature.
+    filenameDateOrder:
+
+    # Paperless parses a document's creation date from filename and file content. You may specify a comma separated
+    # list of dates that should be ignored during this process. This is useful for special dates (like date of birth)
+    # that appear in documents regularly but are very unlikely to be the document's creation date.
+    # The date is parsed using the order specified in PAPERLESS_DATE_ORDER
+    # Defaults to an empty string to not ignore any dates.
+    ignoreDates:
 
     # By default, paperless ignores certain files and folders in the consumption directory, such as system files
     # created by the Mac OS or hidden folders some tools use to store data.
@@ -111,11 +220,47 @@ config:
     # "@eaDir/*", "Thumbs.db"].
     ignorePatterns:
 
+    iNotify:
+      # Sets the time in seconds the consumer will wait for additional events from inotify before the consumer
+      # will consider a file ready and begin consumption. Certain scanners or network setups may generate multiple
+      # events for a single file, leading to multiple consumers working on the same file.
+      # Configure this to prevent that.
+      # Defaults to 0.5 seconds.
+      delay:
+
+    # Paperless searches an entire document for dates. The first date found will be used as the initial value for
+    # the created date. When this variable is greater than 0 (or left to its default value), paperless will also
+    # suggest other dates found in the document, up to a maximum of this setting. Note that duplicates will be
+    # removed, which can result in fewer dates displayed in the frontend than this setting value.
+    # The task to find all dates can be time-consuming and increases with a higher (maximum) number of suggested
+    # dates and slower hardware.
+    # Defaults to 3. Set to 0 to disable this feature.
+    numSuggestedDates:
+
     # After a document is consumed, Paperless can trigger an arbitrary script if you like.
     # This script will be provided data for it to work with via the environment.
     # For more information, take a look at Post-consumption script.
     # The default is blank, which means nothing will be executed.
     postConsumeScript:
+
+    polling:
+      # If consumer polling is enabled, sets the delay in seconds between each check (above) paperless will
+      # do while waiting for a file to remain unmodified.
+      # Defaults to 5.
+      delay:
+      
+      # If paperless won't find documents added to your consume folder, it might not be able to automatically
+      # detect filesystem changes. In that case, specify a polling interval in seconds here, which will then
+      # cause paperless to periodically check your consumption directory for changes. This will also disable
+      # listening for file system changes with inotify.
+      # Defaults to 0, which disables polling and uses filesystem notifications.
+      interval:
+
+      # If consumer polling is enabled, sets the maximum number of times paperless will check for a file to remain
+      # unmodified. If a file's modification time and size are identical for two consecutive checks, it will be
+      # consumed.
+      # Defaults to 5.
+      retryCount:
 
     # After some initial validation, Paperless can trigger an arbitrary script if you like before beginning
     # consumption. This script will be provided data for it to work with via the environment.
@@ -162,6 +307,35 @@ config:
     # Configures the Django setting USE_X_FORWARDED_PORT which may be needed for hosting behind a proxy.
     # Defaults to False
     useXForwardPort: true
+
+  incomingMail:
+    oAuth:
+      # The base URL for the OAuth callback. This is used to construct the full URL for the OAuth callback.
+      # This should be the URL that the Paperless instance is accessible at. If not set, defaults to the
+      # PAPERLESS_URL setting. At least one of these settings must be set to enable OAuth Email setup.
+      # Defaults to none (thus will use PAPERLESS_URL).
+      # Note: This setting only applies to OAuth Email setup (not to the SSO setup).
+      callbackBaseUrl:
+
+      # The OAuth client ID for Gmail. This is required for Gmail OAuth Email setup. See OAuth Email Setup
+      # for more information.
+      # Defaults to none.
+      gMailOAuthClientId:
+
+      # The OAuth client secret for Gmail. This is required for Gmail OAuth Email setup. See OAuth Email Setup
+      # for more information.
+      # Defaults to none.
+      gMailOAuthClientSecret:
+
+      # The OAuth client ID for Outlook. This is required for Outlook OAuth Email setup. See OAuth Email Setup
+      # for more information.
+      # Defaults to none.
+      outlookOAuthClientId:
+
+      # The OAuth client secret for Outlook. This is required for Outlook OAuth Email setup. See OAuth Email Setup
+      # for more information.
+      # Defaults to none.
+      outlookOAuthClientSecret:
 
   ocr:
     # Tells paperless to use unpaper to clean any input document before sending it to tesseract.

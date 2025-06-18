@@ -60,19 +60,70 @@ data:
   PAPERLESS_ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS: "{{ .unknownAccounts }}"
   {{- end }}
   {{- end }}
+  # Barcode settings
+  {{- with .Values.config.barcode }}
+  {{- if not (kindIs "invalid" .asnBarcodePrefix) }}
+  PAPERLESS_CONSUMER_ASN_BARCODE_PREFIX: "{{ .asnBarcodePrefix }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .barcodeDpi) }}
+  PAPERLESS_CONSUMER_BARCODE_DPI: "{{ .barcodeDpi }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .barcodeString) }}
+  PAPERLESS_CONSUMER_BARCODE_STRING: "{{ .barcodeString }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .barcodeUpscale) }}
+  PAPERLESS_CONSUMER_BARCODE_UPSCALE: "{{ .barcodeUpscale }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .enableAsnBarcode) }}
+  PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE: "{{ .enableAsnBarcode }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .enableTagBarcode) }}
+  PAPERLESS_CONSUMER_ENABLE_TAG_BARCODE: "{{ .enableTagBarcode }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .enabled) }}
+  PAPERLESS_CONSUMER_ENABLE_BARCODES: "{{ .enabled }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .maxPages) }}
+  PAPERLESS_CONSUMER_BARCODE_MAX_PAGES: "{{ .maxPages }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .retainSplitPages) }}
+  PAPERLESS_CONSUMER_BARCODE_RETAIN_SPLIT_PAGES: "{{ .retainSplitPages }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .tagBarcodeMapping) }}
+  PAPERLESS_CONSUMER_TAG_BARCODE_MAPPING: "{{ .tagBarcodeMapping }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .tiffSupport) }}
+  PAPERLESS_CONSUMER_BARCODE_TIFF_SUPPORT: "{{ .tiffSupport }}"
+  {{- end }}
+  {{- end }}
   # Document Consumption settings
   {{- with .Values.config.documentConsumption }}
   {{- if not (kindIs "invalid" .barcodeScanner) }}
   PAPERLESS_CONSUMER_BARCODE_SCANNER: "{{ .barcodeScanner }}"
   {{- end }}
-  {{- if not (kindIs "invalid" .deleteDuplicates) }}
-  PAPERLESS_CONSUMER_DELETE_DUPLICATES: "{{ .deleteDuplicates }}"
-  {{- end }}
   {{- if not (kindIs "invalid" .consumerDisable) }}
   PAPERLESS_CONSUMER_DISABLE: "{{ .consumerDisable }}"
   {{- end }}
+  {{- if not (kindIs "invalid" .dateOrder) }}
+  PAPERLESS_DATE_ORDER: "{{ .dateOrder }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .deleteDuplicates) }}
+  PAPERLESS_CONSUMER_DELETE_DUPLICATES: "{{ .deleteDuplicates }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .enableGpgDecryptor) }}
+  PAPERLESS_ENABLE_GPG_DECRYPTOR: "{{ .enableGpgDecryptor }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .filenameDateOrder) }}
+  PAPERLESS_FILENAME_DATE_ORDER: "{{ .filenameDateOrder }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .ignoreDates) }}
+  PAPERLESS_IGNORE_DATES: "{{ .ignoreDates }}"
+  {{- end }}
   {{- if not (kindIs "invalid" .ignorePatterns) }}
   PAPERLESS_CONSUMER_IGNORE_PATTERNS: "{{ .ignorePatterns }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .numSuggestedDates) }}
+  PAPERLESS_NUMBER_OF_SUGGESTED_DATES: "{{ .numSuggestedDates }}"
   {{- end }}
   {{- if not (kindIs "invalid" .recursive) }}
   PAPERLESS_CONSUMER_RECURSIVE: "{{ .recursive }}"
@@ -85,6 +136,24 @@ data:
   {{- end }}
   {{- if not (kindIs "invalid" .preConsumeScript) }}
   PAPERLESS_PRE_CONSUME_SCRIPT: "{{ .preConsumeScript }}"
+  {{- end }}
+  {{- end }}
+  # Document Consumption (iNotify) settings
+  {{- with .Values.config.documentConsumption.iNotify }}
+  {{- if not (kindIs "invalid" .delay) }}
+  PAPERLESS_CONSUMER_INOTIFY_DELAY: "{{ .delay }}"
+  {{- end }}
+  {{- end }}
+  # Document Consumption (polling) settings
+  {{- with .Values.config.documentConsumption.polling }}
+  {{- if not (kindIs "invalid" .delay) }}
+  PAPERLESS_CONSUMER_POLLING_DELAY: "{{ .delay }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .interval) }}
+  PAPERLESS_CONSUMER_POLLING: "{{ .interval }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .retryCount) }}
+  PAPERLESS_CONSUMER_POLLING_RETRY_COUNT: "{{ .retryCount }}"
   {{- end }}
   {{- end }}
   # Filename settings
@@ -103,6 +172,24 @@ data:
   {{- end }}
   {{- if not (kindIs "invalid" .useXForwardPort) }}
   PAPERLESS_USE_X_FORWARD_PORT: "{{ .useXForwardPort }}"
+  {{- end }}
+  {{- end }}
+  # Incoming mail (OAuth) settings
+  {{- with .Values.config.incomingMail.oAuth }}
+  {{- if not (kindIs "invalid" .callbackBaseUrl) }}
+  PAPERLESS_OAUTH_CALLBACK_BASE_URL: "{{ .callbackBaseUrl }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .gMailOAuthClientId) }}
+  PAPERLESS_GMAIL_OAUTH_CLIENT_ID: "{{ .gMailOAuthClientId }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .gMailOAuthClientSecret) }}
+  PAPERLESS_GMAIL_OAUTH_CLIENT_SECRET: "{{ .gMailOAuthClientSecret }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .outlookOAuthClientId) }}
+  PAPERLESS_OUTLOOK_OAUTH_CLIENT_ID: "{{ .outlookOAuthClientId }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .outlookOAuthClientSecret) }}
+  PAPERLESS_OUTLOOK_OAUTH_CLIENT_SECRET: "{{ .outlookOAuthClientSecret }}"
   {{- end }}
   {{- end }}
   # OCR settings
