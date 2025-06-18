@@ -1,8 +1,16 @@
-name: paperless
-description: A generated Helm Chart for paperless from Skippbox Kompose
-version: 0.0.1
 apiVersion: v2
+name: paperless-ngx
+description: Paperless-ngx is a community-supported open-source document management system that transforms your physical documents into a searchable online archive so you can keep, well, less paper.
+home: https://www.github.com/JohnCardenas/selfhosted-k8s
+icon: https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/b948750/src-ui/src/assets/logo-notext.svg
+type: application
+version: 1.0.0
+appVersion: "2.16.3"
+kubeVersion: ">=v1.32.5"
 keywords:
+  - documents
+  - ocr
   - paperless
+  - paper
 sources:
-home:
+  - https://github.com/paperless-ngx/paperless-ngx

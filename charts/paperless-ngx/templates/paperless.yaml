@@ -44,9 +44,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ $fullname }}-paperless-configmap
-          {{- with .Values.paperless.deployment.image }}
-          image: {{ .repository }}:{{ .tag }}
-          {{- end }}
+          image: {{ .Values.paperless.deployment.image.repository }}:{{ .Chart.AppVersion }}
           name: {{ .Chart.Name }}
           volumeMounts:
             {{- range $v := .Values.paperless.deployment.volumes }}

@@ -738,7 +738,6 @@ paperless:
   deployment:
     image:
       repository: ghcr.io/paperless-ngx/paperless-ngx
-      tag: latest
     volumes:
       - name: paperless-consume
         mountPath: /usr/src/paperless/consume
