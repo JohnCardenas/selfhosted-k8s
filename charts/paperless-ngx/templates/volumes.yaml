@@ -9,7 +9,6 @@ metadata:
   name: {{ $fullname }}-{{ $v.name }}
   labels:
     {{- $labels | nindent 4 }}
-    app.kubernetes.io/component: {{ $v.component }}
 spec:
   accessModes:
     - ReadWriteOnce

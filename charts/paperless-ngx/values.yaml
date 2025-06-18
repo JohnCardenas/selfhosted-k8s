@@ -696,30 +696,25 @@ ingress:
   certManagerClusterIssuer:
 
   # Indicate the maximum upload size for the proxy.
-  maxUploadSize: "150m"
+  maxUploadSize: "15m"
 
 volumeStorageClassName: ""
 
 volumes:
   - name: "paperless-consume"
-    capacity: "100Mi"
-    component: paperless
+    capacity: "150Mi"
 
   - name: "paperless-data"
-    capacity: "100Mi"
-    component: paperless
+    capacity: "5Gi"
 
   - name: "paperless-export"
     capacity: "100Mi"
-    component: paperless
 
   - name: "paperless-media"
-    capacity: "100Mi"
-    component: paperless
+    capacity: "50Gi"
 
   - name: "redis-data"
     capacity: "100Mi"
-    component: redis
 
 paperless:
   deployment:

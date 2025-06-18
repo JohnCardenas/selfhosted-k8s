@@ -8,7 +8,7 @@ metadata:
     {{- include "paperless-ngx.labels" . | nindent 4 }}
   annotations:
     {{- with .Values.ingress }}
-    nginx.ingress.kubernetes.io/proxy-body-size: {{ .maxUploadSize }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .maxUploadSize | default "15m" }}
     {{- if .certManagerClusterIssuer }}
     cert-manager.io/cluster-issuer: {{ .certManagerClusterIssuer }}
     {{- end }}
