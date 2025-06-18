@@ -1,4 +1,9 @@
 config:
+  auditLog:
+    # Enables the audit trail for documents, document types, correspondents, and tags.
+    # Defaults to true.
+    enabled:
+
   authentication:
     builtin:
       # Allow users to signup for a new Paperless-ngx account.
@@ -170,6 +175,51 @@ config:
     # Defaults to false.
     tiffSupport:
 
+  collation:
+    doubleSided:
+      # Enables automatic collation of two single-sided scans into a double-sided document.
+      # This is useful if you have an automatic document feeder that only supports single-sided scans, but you need to scan a double-sided document. If your ADF supports double-sided scans natively, you do not need this feature.
+      # PAPERLESS_CONSUMER_RECURSIVE must be enabled for this to work.
+      # For more information, read the corresponding section in the advanced documentation.
+      # Defaults to false.
+      enabled:
+
+      # The name of the subdirectory that the collate feature expects documents to arrive.
+      # This only has an effect if PAPERLESS_CONSUMER_ENABLE_COLLATE_DOUBLE_SIDED has been enabled.
+      # Note that Paperless will not automatically create the directory.
+      # Defaults to "double-sided".
+      subdirName:
+
+      # Whether TIFF image files should be supported when collating documents. This will automatically
+      # convert any TIFF image(s) to pdfs for later processing. This only has an effect if
+      # PAPERLESS_CONSUMER_ENABLE_COLLATE_DOUBLE_SIDED has been enabled.
+      # Defaults to false.
+      tiffSupport:
+
+  container:
+    userMap:
+      # USERMAP_GID=<gid>
+      # The ID of the paperless Group in the container. Set this to your actual group ID on the host system,
+      # which you can get by executing "id -g". Paperless will change ownership on its folders to this group,
+      # so you need to get this right in order to be able to write to the consumption directory.
+      # Defaults to 1000.
+      gid:
+
+      # USERMAP_UID=<uid>
+      # The ID of the paperless user in the container. Set this to your actual user ID on the host system,
+      # which you can get by executing "id -u". Paperless will change ownership on its folders to this user,
+      # so you need to get this right in order to be able to write to the consumption directory.
+      # Defaults to 1000.
+      uid:
+
+    webServer:
+      # PAPERLESS_WEBSERVER_WORKERS=<num>
+      # The number of worker processes the webserver should spawn. More worker processes usually result in the
+      # front end to load data much quicker. However, each worker process also loads the entire application into
+      # memory separately, so increasing this value will increase RAM usage.
+      # Defaults to 1.
+      workers:
+
   documentConsumption:
     # Sets the barcode scanner used for barcode functionality.
     # Currently, "PYZBAR" (the default) or "ZXING" might be selected. If you have problems that your
@@ -281,6 +331,35 @@ config:
     # Defaults to false.
     subdirsAsTags:
 
+  email:
+    # PAPERLESS_EMAIL_FROM=<str>
+    # Defaults to PAPERLESS_EMAIL_HOST_USER if not set.
+    from:
+
+    # PAPERLESS_EMAIL_HOST=<str>
+    # Defaults to 'localhost'.
+    host:
+    
+    # PAPERLESS_EMAIL_HOST_PASSWORD=<str>
+    # Defaults to ''.
+    password:
+    
+    # PAPERLESS_EMAIL_PORT=<int>
+    # Defaults to port 25.
+    port:
+    
+    # PAPERLESS_EMAIL_HOST_USER=<str>
+    # Defaults to ''.
+    user:
+    
+    # PAPERLESS_EMAIL_USE_SSL=<bool>
+    # Defaults to false.
+    useSsl:
+    
+    # PAPERLESS_EMAIL_USE_TLS=<bool>
+    # Defaults to false.
+    useTls:
+
   filenames:
     # Changes the filenames paperless uses to store documents in the media directory.
     # See File name handling for details.
@@ -292,6 +371,15 @@ config:
     # See File name handling for details.
     # Defaults to false which disables this feature.
     formatRemoveNone:
+
+  frontEnd:
+    # PAPERLESS_APP_TITLE=<str>
+    # If set, overrides the default name "Paperless-ngx"
+    title:
+
+    # PAPERLESS_APP_LOGO=<path>
+    # Path to an image file in the /media/logo directory, must include 'logo', e.g. /logo/Atari_logo.svg
+    logo:
 
   hosting:
     # Paperless uses this to make session tokens. If you expose paperless on the internet,
@@ -450,6 +538,15 @@ config:
   optionalServices:
     # Enable (or disable) the Tika parser.
     tikaEnabled:
+
+  trash:
+    # Sets how long in days documents remain in the 'trash' before they are permanently deleted.
+    # Defaults to 30 days, minimum of 1 day.
+    emptyDelay:
+
+    # Configures the schedule to empty the trash of expired deleted documents.
+    # Defaults to :0 1 * * *", once per day.
+    emptyTask:
 
   tweaks:
     # A comma-separated list of Django apps to be included in Django's INSTALLED_APPS.

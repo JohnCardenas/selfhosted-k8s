@@ -9,6 +9,12 @@ metadata:
     app.kubernetes.io/component: paperless
 data:
   PAPERLESS_URL: "https://{{ .Values.ingress.endpoint }}"
+  # Audit Log settings
+  {{- with .Values.config.auditLog }}
+  {{- if not (kindIs "invalid" .enabled) }}
+  PAPERLESS_AUDIT_LOG_ENABLED: "{{ .enabled }}"
+  {{- end }}
+  {{- end }}
   # Authentication (built-in) settings
   {{- with .Values.config.authentication.builtin }}
   {{- if not (kindIs "invalid" .allowSignups) }}
@@ -96,6 +102,33 @@ data:
   PAPERLESS_CONSUMER_BARCODE_TIFF_SUPPORT: "{{ .tiffSupport }}"
   {{- end }}
   {{- end }}
+  # Collation (double-sided) settings
+  {{- with .Values.config.collation.doubleSided }}
+  {{- if not (kindIs "invalid" .enabled) }}
+  PAPERLESS_CONSUMER_ENABLE_COLLATE_DOUBLE_SIDED: "{{ .enabled }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .subdirName) }}
+  PAPERLESS_CONSUMER_COLLATE_DOUBLE_SIDED_SUBDIR_NAME: "{{ .subdirName }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .tiffSupport) }}
+  PAPERLESS_CONSUMER_COLLATE_DOUBLE_SIDED_TIFF_SUPPORT: "{{ .tiffSupport }}"
+  {{- end }}
+  {{- end }}
+  # Container (webServer) settings
+  {{- with .Values.config.container.webServer }}
+  {{- if not (kindIs "invalid" .workers) }}
+  PAPERLESS_WEBSERVER_WORKERS: "{{ .workers }}"
+  {{- end }}
+  {{- end }}
+  # Container (usermap) settings
+  {{- with .Values.config.container.userMap }}
+  {{- if not (kindIs "invalid" .gid) }}
+  USERMAP_GID: "{{ .gid }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .uid) }}
+  USERMAP_UID: "{{ .uid }}"
+  {{- end }}
+  {{- end }}
   # Document Consumption settings
   {{- with .Values.config.documentConsumption }}
   {{- if not (kindIs "invalid" .barcodeScanner) }}
@@ -156,6 +189,30 @@ data:
   PAPERLESS_CONSUMER_POLLING_RETRY_COUNT: "{{ .retryCount }}"
   {{- end }}
   {{- end }}
+  # Email settings
+  {{- with .Values.config.email }}
+  {{- if not (kindIs "invalid" .from) }}
+  PAPERLESS_EMAIL_FROM: "{{ .from }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .host) }}
+  PAPERLESS_EMAIL_HOST: "{{ .host }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .password) }}
+  PAPERLESS_EMAIL_HOST_PASSWORD: "{{ .password }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .port) }}
+  PAPERLESS_EMAIL_PORT: "{{ .port }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .user) }}
+  PAPERLESS_EMAIL_HOST_USER: "{{ .user }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .useSsl) }}
+  PAPERLESS_EMAIL_USE_SSL: "{{ .useSsl }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .useTls) }}
+  PAPERLESS_EMAIL_USE_TLS: "{{ .useTls }}"
+  {{- end }}
+  {{- end }}
   # Filename settings
   {{- with .Values.config.filenames }}
   {{- if not (kindIs "invalid" .format) }}
@@ -163,6 +220,15 @@ data:
   {{- end }}
   {{- if not (kindIs "invalid" .formatRemoveNone) }}
   PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: "{{ .formatRemoveNone }}"
+  {{- end }}
+  {{- end }}
+  # Front-end settings
+  {{- with .Values.config.container.frontEnd }}
+  {{- if not (kindIs "invalid" .title) }}
+  PAPERLESS_APP_TITLE: "{{ .title }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .logo) }}
+  PAPERLESS_APP_LOGO: "{{ .logo }}"
   {{- end }}
   {{- end }}
   # Hosting settings
@@ -229,6 +295,15 @@ data:
   {{- end }}
   {{- if not (kindIs "invalid" .skipArchiveFile) }}
   PAPERLESS_OCR_SKIP_ARCHIVE_FILE: {{ .skipArchiveFile }}
+  {{- end }}
+  {{- end }}
+  # Trash settings
+  {{- with .Values.config.trash }}
+  {{- if not (kindIs "invalid" .emptyDelay) }}
+  PAPERLESS_EMPTY_TRASH_DELAY: "{{ .emptyDelay }}"
+  {{- end }}
+  {{- if not (kindIs "invalid" .emptyTask) }}
+  PAPERLESS_EMPTY_TRASH_TASK_CRON: "{{ .emptyTask }}"
   {{- end }}
   {{- end }}
   # Tweaks settings
