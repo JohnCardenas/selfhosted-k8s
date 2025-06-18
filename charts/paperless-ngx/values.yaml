@@ -436,16 +436,6 @@ config:
     # Just face-roll your keyboard.
     secretKey:
 
-    # PAPERLESS_USE_X_FORWARD_HOST=<bool>
-    # Configures the Django setting USE_X_FORWARDED_HOST which may be needed for hosting behind a proxy.
-    # Defaults to false.
-    useXForwardHost: true
-
-    # PAPERLESS_USE_X_FORWARD_PORT=<bool>
-    # Configures the Django setting USE_X_FORWARDED_PORT which may be needed for hosting behind a proxy.
-    # Defaults to False
-    useXForwardPort: true
-
   incomingMail:
     oAuth:
       # PAPERLESS_OAUTH_CALLBACK_BASE_URL=<str>
@@ -708,31 +698,28 @@ ingress:
   # Indicate the maximum upload size for the proxy.
   maxUploadSize: "150m"
 
+volumeStorageClassName: ""
+
 volumes:
   - name: "paperless-consume"
     capacity: "100Mi"
     component: paperless
-    storageClassName: ""
 
   - name: "paperless-data"
     capacity: "100Mi"
     component: paperless
-    storageClassName: ""
 
   - name: "paperless-export"
     capacity: "100Mi"
     component: paperless
-    storageClassName: ""
 
   - name: "paperless-media"
     capacity: "100Mi"
     component: paperless
-    storageClassName: ""
 
   - name: "redis-data"
     capacity: "100Mi"
     component: redis
-    storageClassName: ""
 
 paperless:
   deployment:

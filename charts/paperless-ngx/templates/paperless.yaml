@@ -33,6 +33,10 @@ spec:
                 secretKeyRef:
                   name: {{ $fullname }}-paperless-secrets
                   key: secretKey
+            - name: PAPERLESS_USE_X_FORWARD_HOST
+              value: "true"
+            - name: PAPERLESS_USE_X_FORWARD_PORT
+              value: "true"
             {{- if .Values.config.optionalServices.tikaEnabled }}
             - name: PAPERLESS_TIKA_ENABLED
               value: "1"

@@ -1,5 +1,6 @@
 {{- $fullname := include "paperless-ngx.fullname" . }}
 {{- $labels := include "paperless-ngx.labels" . }}
+{{- $storageClassName := .Values.volumeStorageClassName | default "" }}
 {{- range $v := .Values.volumes }}
 ---
 apiVersion: v1
@@ -12,7 +13,9 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: {{ $v.storageClassName }}
+  {{- if $storageClassName }}
+  storageClassName: {{ $storageClassName }}
+  {{- end }}
   resources:
     requests:
       storage: {{ $v.capacity }}
