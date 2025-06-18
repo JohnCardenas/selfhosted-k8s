@@ -737,7 +737,7 @@ redis:
   deployment:
     image:
       repository: docker.io/library/redis
-      tag: "7"
+      tag: latest
     volumes:
       - name: "redis-data"
         mountPath: "/data"
@@ -758,7 +758,7 @@ gotenberg:
   deployment:
     image:
       repository: gotenberg/gotenberg
-      tag: "7.10"
+      tag: latest
   service:
     ports:
       - 3000
